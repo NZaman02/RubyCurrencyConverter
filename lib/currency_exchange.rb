@@ -11,21 +11,27 @@ module CurrencyExchange
     jsonFile = File.read('./data/eurofxref-hist-90d.json')
     parsedFile = JSON.parse(jsonFile)
 
-    #check date valid frist
+    #check date valid first
     if parsedFile[date.to_s] == nil
-     raise "The date was invalid"
+     # raise "The date was invalid"
     else
       #only tries to calculate if date true
+      if to_currency.to_s == "EUR"
+        toCurrInt = 1
+      end
+      if from_currency.to_s == "EUR"
+        fromCurrInt = 1
+      end
       fromCurrInt = parsedFile[date.to_s][from_currency.to_s]
       toCurrInt = parsedFile[date.to_s][to_currency.to_s]
 
       #checks both currencies are valid
-      if parsedFile[date.to_s][from_currency.to_s] == nil
-       raise "The currency FROM is invalid"
+      if fromCurrInt == nil
+       # raise "The currency FROM is invalid"
        return (1*toCurrInt)
 
-      elsif parsedFile[date.to_s][to_currency.to_s] == nil
-       raise "The currency TO is invalid"
+      elsif toCurrInt == nil
+       # raise "The currency TO is invalid"
        return(1/fromCurrInt)
 
       else
@@ -39,3 +45,4 @@ module CurrencyExchange
   end
 
 end
+
