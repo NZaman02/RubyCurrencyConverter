@@ -10,42 +10,41 @@ module CurrencyExchange
     require 'json'
     jsonFile = File.read('./data/eurofxref-hist-90d.json')
     parsedFile = JSON.parse(jsonFile)
-    return self.performCalc(parsedFile,date,from_currency,to_currency)
+    #can adjust last parameter to use rates not based on EUR
+    return self.performCalcWithJSON(parsedFile,date,from_currency,to_currency,"EUR")
 
     #having an "easier to ask for forgiveness system" call the right function based
     #on the input file that is seen
   rescue Exception => e
-    print("Not a json")
+    raise "Not a json"
 
     end
 
 
 
-  def self.performCalc(parsedFile,date,from_currency,to_currency)
+  def self.performCalcWithJSON(parsedFile,date,from_currency,to_currency,default)
     #check date valid first
     if parsedFile[date.to_s] == nil
-     # raise "The date was invalid"
+      raise "The date was invalid"
     else
       #only tries to calculate if date true
       fromCurrInt = parsedFile[date.to_s][from_currency.to_s]
       toCurrInt = parsedFile[date.to_s][to_currency.to_s]
 
       #everything is based on EUR so would just be 1
-      if to_currency.to_s == "EUR"
+      if to_currency.to_s == default
         toCurrInt = 1
       end
-      if from_currency.to_s == "EUR"
+      if from_currency.to_s == default
         fromCurrInt = 1
       end
 
       #checks both currencies are valid
       if fromCurrInt == nil
        raise "The currency FROM is invalid"
-       return (1*toCurrInt)
 
       elsif toCurrInt == nil
        raise "The currency TO is invalid"
-       return(1/fromCurrInt)
 
       else
         #returns if fine
